@@ -202,15 +202,12 @@ Delete intermediate buffers when navigating through dired.
     (setq custom-file "~/.emacs.d/to-be-dumped.el"))
 #+END_SRC
 * Third-party packages
-Many Emacsers love having tons of packages -- and that's absolutely fine! However, one of the goals of the Yay-Evil distro is to provide an essential-only foundation for users to build upon. Therefore, only the most important packages and/or lightweight improvements will be included here. For example, completion frameworks like Ivy or Helm are considered heavy by many, yet the built-in Ido serves almost the same purpose. The only arguably opinionated package is probably Evil, but you probably saw that coming from the distro name, didn't you ;) ? If you prefer the default keybindings, simply disable the section that controls the Evil behaviours.
-
-Normally, we need to add ~:ensure t~ to tell ~use-package~ to download packages when it's not available. But since we've added ~use-package-always-ensure~ in ~init.el~, we can omit it.
 ** GUI enhancements
 *** Load custom theme
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
   (use-package dracula-theme)
-  (load-theme 'dracula t)
+  (load-theme 'doom-one t)
 #+END_SRC
 *** Dashboard welcome page
 #+BEGIN_SRC emacs-lisp
@@ -244,7 +241,6 @@ Lightweight syntax highlighting improvement for numbers, operators, and escape s
   :hook (after-init . all-the-icons-ivy-setup))
 #+END_SRC
 ** Git Integration
-Tell magit to automatically put us in vi-insert-mode when committing a change.
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :bind ("C-x g" . magit-status))
@@ -254,7 +250,6 @@ Tell magit to automatically put us in vi-insert-mode when committing a change.
 #+END_SRC
 ** Searching/sorting enhancements
 *** Ido, ido-vertical, ido-ubiquitous and fuzzy matching
-Selecting buffers/files with great efficiency. In my opinion, Ido is enough to replace Ivy/Counsel and Helm. We install ido-vertical to get a better view of the available options (use ~C-n~, ~C-p~ or arrow keys to navigate). Ido-ubiquitous (from the ~ido-completing-read+~ package) provides us ido-like completions in describing functions and variables etc. Fuzzy matching is a nice feature and we have flx-ido for that purpose.
 #+BEGIN_SRC emacs-lisp
   ;; (use-package ido
   ;;   :config
@@ -300,12 +295,16 @@ Selecting buffers/files with great efficiency. In my opinion, Ido is enough to r
           ivy-count-format "(%d/%d) "
           ivy-initial-inputs-alist nil))
 
+
   (use-package swiper
     :after ivy
     :custom-face (swiper-line-face ((t (:foreground "#ffffff" :background "#60648E"))))
     :config
     (setq swiper-action-recenter t)
     (setq swiper-goto-start-of-match t))
+
+  (use-package smex
+    :after counsel)
 
 #+END_SRC
 *** Chords
@@ -318,6 +317,8 @@ Selecting buffers/files with great efficiency. In my opinion, Ido is enough to r
 #+END_SRC
 ** Programming language support and utilities
 *** Company for auto-completion
+
+
 Use ~C-n~ and ~C-p~ to navigate the tooltip.
 #+BEGIN_SRC emacs-lisp
   (use-package company
@@ -328,6 +329,7 @@ Use ~C-n~ and ~C-p~ to navigate the tooltip.
           company-idle-delay 0.1
           company-selection-wrap-around t
           company-tooltip-align-annotations t
+          company-dabbrev-downcase nil
           company-frontends '(company-pseudo-tooltip-frontend ; show tooltip even for single candidate
                               company-echo-metadata-frontend))
     (with-eval-after-load 'company
@@ -391,6 +393,20 @@ Markdown mode and JSON/Js2 mode
 YAML Mode
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode)
+#+END_SRC
+Clojure Mode and CIDER
+#+BEGIN_SRC emacs-lisp
+  (use-package clojure-mode)
+  (use-package cider)
+#+END_SRC
+*** LSP
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode :commands lsp)
+  (use-package lsp-ui :commands lsp-ui-mode)
+  (use-package company-lsp :commands company-lsp)
+  (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+  (use-package lsp-java :after lsp
+    :hook (java-mode . lsp))
 #+END_SRC
 ** Projects
 *** Projectile...
