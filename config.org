@@ -11,7 +11,7 @@ Clean up the UI and enhance some basic defaults defined in "C Source Code". The 
     (setq frame-title-format '("nishmacs") ; It's me!
           ring-bell-function 'ignore       ; minimise distraction
           frame-resize-pixelwise t
-          default-directory "~/")
+          default-directory "~/workplace")
 
     (tool-bar-mode -1)
     (menu-bar-mode -1)
@@ -32,37 +32,32 @@ Clean up the UI and enhance some basic defaults defined in "C Source Code". The 
 
 #+END_SRC
 * Configuration for built-in packages
-Since we're using use-package as our package management system, we might as well try to organise under the same syntax as much as possible to keep the configuration consistent. The option ~use-package-always-ensure~ is turned on in ~init.el~, so we'll add ~:ensure nil~ when configuring the built-in packages.
+Since we're using use-package as our package management system, we might as well try to organise under the same syntax as much as possible to keep the configuration consistent. The option ~use-package-always-ensure~ is turned on in ~init.el~, so we'll add ~~ when configuring the built-in packages.
 ** Omit default startup screen
 #+BEGIN_SRC emacs-lisp
   (use-package "startup"
-    :ensure nil
     :config (setq inhibit-startup-screen t))
 #+END_SRC
 ** Replace selection on insert.
-Replace the active region just by typing text, just like modern editors
+Replace the active region just by typing text.
 #+BEGIN_SRC emacs-lisp
   (use-package delsel
-    :ensure nil
     :config (delete-selection-mode +1))
 #+END_SRC
 ** Disable scroll-bar
 #+BEGIN_SRC emacs-lisp
   (use-package scroll-bar
-    :ensure nil
     :config (scroll-bar-mode -1))
 #+END_SRC
 ** Enable column numbers
 #+BEGIN_SRC emacs-lisp
   (use-package simple
-    :ensure nil
     :config (column-number-mode +1))
 #+END_SRC
 ** Split right and split below
 The Emacs default split doesn't seem too intuitive for the majority of users.
 #+BEGIN_SRC emacs-lisp
   (use-package "window"
-    :ensure nil
     :preface
     (defun nish/split-and-follow-horizontally ()
       "Split window below."
@@ -82,7 +77,6 @@ The Emacs default split doesn't seem too intuitive for the majority of users.
 Don't bother confirming killing processes and better config for autosaves.
 #+BEGIN_SRC emacs-lisp
   (use-package files
-    :ensure nil
     :config
     (setq confirm-kill-processes nil
           backup-directory-alist `(("." . "~/.emacs-saves"))
@@ -96,7 +90,6 @@ Don't bother confirming killing processes and better config for autosaves.
 Auto refreshes every 2 seconds. Don't forget to refresh the version control status as well.
 #+BEGIN_SRC emacs-lisp
   (use-package autorevert
-    :ensure nil
     :config
     (global-auto-revert-mode +1)
     (setq auto-revert-interval 2
@@ -108,7 +101,6 @@ Auto refreshes every 2 seconds. Don't forget to refresh the version control stat
 Only use eldoc in prog-mode (by defaults it's turned on globally, but reports say it hinders performance).
 #+BEGIN_SRC emacs-lisp
   (use-package eldoc
-    :ensure nil
     :diminish eldoc-mode
     :config
     (global-eldoc-mode +1)
@@ -119,7 +111,6 @@ For Java and C/C++, change the formatting style from GNU (the default) to the mo
 #+BEGIN_SRC emacs-lisp
   ;; C, C++, and Java
   (use-package cc-vars
-    :ensure nil
     :config
     (setq-default c-basic-offset nish/indent-width)
     (setq c-default-style '((java-mode . "java")
@@ -128,19 +119,16 @@ For Java and C/C++, change the formatting style from GNU (the default) to the mo
 
   ;; JavaScript
   (use-package js
-    :ensure nil
     :config (setq js-indent-level 2))
 
   ;; Python (both v2 and v3)
   (use-package python
-    :ensure nil
     :config (setq python-indent-offset nish/indent-width))
 #+END_SRC
 ** Mouse wheel (track-pad) scroll speed
 By default, the scrolling is way too fast to be precise and helpful, let's tune it down a little bit.
 #+BEGIN_SRC emacs-lisp
   (use-package mwheel
-    :ensure nil
     :config (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))
                   mouse-wheel-progressive-speed nil))
 #+END_SRC
@@ -148,7 +136,6 @@ By default, the scrolling is way too fast to be precise and helpful, let's tune 
 Reduce the highlight delay to instantly.
 #+BEGIN_SRC emacs-lisp
   (use-package paren
-    :ensure nil
     :init (setq show-paren-delay 0)
     :config (show-paren-mode +1))
 #+END_SRC
@@ -156,7 +143,6 @@ Reduce the highlight delay to instantly.
 Maximise the frame by default on start-up. Set the font to Menlo size 13, if Menlo is installed.
 #+BEGIN_SRC emacs-lisp
   (use-package frame
-    :ensure nil
     :config
     (setq initial-frame-alist (quote ((fullscreen . maximized))))
     (when (member "Menlo" (font-family-list))
@@ -166,27 +152,25 @@ Maximise the frame by default on start-up. Set the font to Menlo size 13, if Men
 Enter ediff with side-by-side buffers to better compare the differences.
 #+BEGIN_SRC emacs-lisp
   (use-package ediff
-    :ensure nil
+
     :config (setq ediff-split-window-function 'split-window-horizontally))
 #+END_SRC
 ** Auto-pairing quotes and parentheses etc.
 Electric-pair-mode has improved quite a bit in recent Emacs versions. No longer need an extra package for this. It also takes care of the new-line-and-push-brace feature.
 #+BEGIN_SRC emacs-lisp
   (use-package elec-pair
-    :ensure nil
     :hook (prog-mode . electric-pair-mode))
 #+END_SRC
 ** Clean up whitespace on save
 #+BEGIN_SRC emacs-lisp
   (use-package whitespace
-    :ensure nil
+
     :hook (before-save . whitespace-cleanup))
 #+END_SRC
 ** Dired tweaks
 Delete intermediate buffers when navigating through dired.
 #+begin_src emacs-lisp
   (use-package dired
-    :ensure nil
     :config
     (setq delete-by-moving-to-trash t)
     (eval-after-load "dired"
@@ -197,7 +181,6 @@ Delete intermediate buffers when navigating through dired.
 ** Dump custom-set-variables to a garbage file and don't load it
 #+BEGIN_SRC emacs-lisp
   (use-package cus-edit
-    :ensure nil
     :config
     (setq custom-file "~/.emacs.d/to-be-dumped.el"))
 #+END_SRC
@@ -215,7 +198,7 @@ Delete intermediate buffers when navigating through dired.
     :config
     (dashboard-setup-startup-hook)
     (setq dashboard-startup-banner 'logo
-          dashboard-banner-logo-title "Doobie doobie!!"
+          dashboard-banner-logo-title "What it do."
           dashboard-items '((recents . 5) (projects . 5))
           dashboard-set-footer nil))
 #+END_SRC
@@ -249,23 +232,6 @@ Lightweight syntax highlighting improvement for numbers, operators, and escape s
     :config (magit-todos-mode))
 #+END_SRC
 ** Searching/sorting enhancements
-*** Ido, ido-vertical, ido-ubiquitous and fuzzy matching
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package ido
-  ;;   :config
-  ;;   (ido-mode +1)
-  ;;   (setq ido-everywhere t
-  ;;         ido-enable-flex-matching t))
-
-  ;; (use-package ido-vertical-mode
-  ;;   :config
-  ;;   (ido-vertical-mode +1)
-  ;;   (setq ido-vertical-define-keys 'C-n-C-p-up-and-down))
-
-  ;; (use-package ido-completing-read+ :config (ido-ubiquitous-mode +1))
-
-  ;; (use-package flx-ido :config (flx-ido-mode +1))
-#+END_SRC
 *** Ivy and Counsel
 #+BEGIN_SRC emacs-lisp
    (use-package counsel
@@ -310,19 +276,16 @@ Lightweight syntax highlighting improvement for numbers, operators, and escape s
 *** Chords
 #+BEGIN_SRC emacs-lisp
 (use-package use-package-chords
-  :ensure t
   :config
   (key-chord-mode 1)
   (setq key-chord-two-keys-delay 0.03)) ; default 0.1
 #+END_SRC
 ** Programming language support and utilities
 *** Company for auto-completion
-
-
 Use ~C-n~ and ~C-p~ to navigate the tooltip.
 #+BEGIN_SRC emacs-lisp
   (use-package company
-    :diminish company-mode
+  :diminish company-mode
     :hook (prog-mode . company-mode)
     :config
     (setq company-minimum-prefix-length 1
@@ -336,6 +299,10 @@ Use ~C-n~ and ~C-p~ to navigate the tooltip.
       (define-key company-active-map (kbd "C-n") 'company-select-next)
       (define-key company-active-map (kbd "C-p") 'company-select-previous)))
 #+END_SRC
+
+#+RESULTS:
+| company-mode | hes-mode | highlight-operators-mode | highlight-numbers-mode | electric-pair-mode |
+
 *** Flycheck
 A modern on-the-fly syntax checking extension -- absolute essential
 #+BEGIN_SRC emacs-lisp
@@ -345,11 +312,16 @@ A modern on-the-fly syntax checking extension -- absolute essential
 Some minimal org mode tweaks: org-bullets gives our headings (h1, h2, h3...) a more visually pleasing look.
 #+BEGIN_SRC emacs-lisp
   (use-package org
-    :hook ((org-mode . visual-line-mode)
-           (org-mode . org-indent-mode)))
-
+  :hook ((org-mode . visual-line-mode) (org-mode . org-indent-mode))
+  :config (setq org-log-done t)
+  (define-key global-map "\C-ca" 'org-agenda) (define-key global-map "\C-cl" 'org-store-link))
+  (setq org-agenda-files (list "~/notes/work.org" "~/notes/WhisperFlows.org"))
   (use-package org-bullets :hook (org-mode . org-bullets-mode))
 #+END_SRC
+
+#+RESULTS:
+| org-bullets-mode | org-indent-mode | visual-line-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-block-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
+
 *** Yasnippet & yasnippet-snippets
 Use TAB to expand snippets. The code snippet below also avoids clashing with company-mode.
 #+BEGIN_SRC emacs-lisp
@@ -370,7 +342,7 @@ Use TAB to expand snippets. The code snippet below also avoids clashing with com
 Jump to Code definitions with "jl" jump back with "jb"
 #+BEGIN_SRC emacs-lisp
   (use-package dumb-jump
-  :ensure t
+
   :bind (("M-g o" . dumb-jump-go-other-window)
          ("M-g j" . dumb-jump-go)
          ("M-g b" . dumb-jump-back)
@@ -408,12 +380,20 @@ Clojure Mode and CIDER
   (use-package lsp-java :after lsp
     :hook (java-mode . lsp))
 #+END_SRC
+*** TypeScript
+#+BEGIN_SRC emacs-lisp
+(use-package tide
+
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (before-save . tide-format-before-save)))
+#+END_SRC
 ** Projects
 *** Projectile...
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
   :diminish
-  :ensure t
   :bind-keymap ("C-c p" . projectile-command-map)
   :chords (("pf" . projectile-find-file)
        ("pr" . projectile-ripgrep))
@@ -447,3 +427,8 @@ Provides us with hints on available keystroke combinations.
     :config (when (memq window-system '(mac ns x))
               (exec-path-from-shell-initialize)))
 #+END_SRC
+* GPG
+** EPA Mode setup
+#+BEGIN_SRC emacs-lisp
+(setq epa-pinentry-mode 'loopback)
+#+END_SRC emacs-lisp
