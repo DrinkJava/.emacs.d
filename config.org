@@ -5,6 +5,7 @@
 Clean up the UI and enhance some basic defaults defined in "C Source Code". The variable ~nish/indent-width~ controls the default indentation across various programming modes. The default is 4, you can change this variable to 2 or any other indentation width you prefer, and the change will be made across all programming language modes including C, C++, Java, JavaScript, Python etc.
 #+BEGIN_SRC emacs-lisp
   (use-package emacs
+    :straight nil
     :preface
     (defvar nish/indent-width 4) ; change this value to your preferred width
     :config
@@ -36,12 +37,14 @@ Since we're using use-package as our package management system, we might as well
 ** Omit default startup screen
 #+BEGIN_SRC emacs-lisp
   (use-package "startup"
+    :straight nil
     :config (setq inhibit-startup-screen t))
 #+END_SRC
 ** Replace selection on insert.
 Replace the active region just by typing text.
 #+BEGIN_SRC emacs-lisp
   (use-package delsel
+    :straight nil
     :config (delete-selection-mode +1))
 #+END_SRC
 ** Disable scroll-bar
@@ -123,7 +126,9 @@ For Java and C/C++, change the formatting style from GNU (the default) to the mo
 
   ;; Python (both v2 and v3)
   (use-package python
-    :config (setq python-indent-offset nish/indent-width))
+    :config (setq python-indent-offset nish/indent-width)
+            (setq python-shell-interpreter "python3")
+    )
 #+END_SRC
 ** Mouse wheel (track-pad) scroll speed
 By default, the scrolling is way too fast to be precise and helpful, let's tune it down a little bit.
