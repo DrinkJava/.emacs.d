@@ -162,8 +162,13 @@ Better regexing for completion.
     :ensure t
     :custom
     (completion-styles '(orderless basic))
-    (completion-category-overrides '((file (styles basic partial-completion)))))
+    (completion-category-overrides '((file (basic)))))
+
+  
 #+end_src
+
+#+RESULTS:
+
 ** [[https://github.com/minad/consult][Consult]]
 #+begin_src emacs-lisp
   ;; Example configuration for Consult
@@ -362,7 +367,11 @@ And Cape for some completion backends.
     (define-key global-map "\C-ca" 'org-agenda) (define-key global-map "\C-cl" 'org-store-link)
     (org-babel-do-load-languages
      'org-babel-load-languages
-     '((python . t)))
+     '(
+       (python . t)
+       (js . t)
+       ))
+    (setq org-babel-python-command "python3")
     )
 
   ;; (use-package org-bullets
@@ -374,7 +383,15 @@ And Cape for some completion backends.
   (use-package org-modern
     :straight t
     :config (global-org-modern-mode))
+
+  (defun my-org-confirm-babel-evaluate (lang body)
+    (not (string= lang "python")))  ;don't ask for python
+  (setq org-confirm-babel-evaluate #'my-org-confirm-babel-evaluate)
+
 #+end_src
+
+#+RESULTS:
+: my-org-confirm-babel-evaluate
 
 
 ** Org Babel
@@ -407,8 +424,8 @@ And Cape for some completion backends.
     > "*** Try to give examples in the last 3 years ish." \n
     > "*** Separate \"we\" from \"me\" and \"team\""\n
     > "* Background"\n \n
-    > (LP-DeepDive) \n
-    > (LP-InventAndSimplify) \n
+    > (LP-Ownership) \n
+    > (LP-BiasForAction) \n
     > (Coding-DSAlgo) \n
     )
 
@@ -423,10 +440,10 @@ And Cape for some completion backends.
      "Tell me about a situation that required you to dig deep to get to the root cause. How did you know you were focusing on the right things? What was the outcome? Would you have done anything differently?\n\n"
      "or\n"
      "Tell me about a time when you were trying to understand a complex problem on your team and you had to dig into the details to figure it out. Who did you talk with or where did you have to look to find the most valuable information? How did you use that information to help solve the problem?\n\n"
-    "** S - What was the problem/issue/request?\n"
-    "** T - What was Challenging about this\n"
-    "** A - What did you do?\n"
-    "** R - What was the result?\n")
+     "** S - What was the problem/issue/request?\n"
+     "** T - What was Challenging about this\n"
+     "** A - What did you do?\n"
+     "** R - What was the result?\n")
     )
 
   (defun LP-EarnTrust ()
@@ -437,27 +454,105 @@ And Cape for some completion backends.
      "Tell me about a time when you had to communicate a change in direction that you anticipated people would have concerns with. What did you do to understand the concerns and mitigate them? Were there any changes you made along the way after hearing these concerns? How did you handle questions and/or resistance? Were you able to get people comfortable with the change? \n\n"
      "or\n"
      "Give me an example of a time when you were not able to meet a commitment. What was the commitment and what were the obstacles that prevented success? What was the impact to your customers/peers and what did you learn from it?\n\n"
-    "** S - What was the problem/issue/request?\n"
-    "** T - What was Challenging about this\n"
-    "** A - What did you do?\n"
-    "** R - What was the result?\n"
+     "** S - What was the problem/issue/request?\n"
+     "** T - What was Challenging about this\n"
+     "** A - What did you do?\n"
+     "** R - What was the result?\n"
      )
     )
 
   (defun LP-InventAndSimplify ()
-  "Just returns standard text for InventAndSimplify LP questions in org bullet format"
-  (concat
+    "Just returns standard text for InventAndSimplify LP questions in org bullet format"
+    (concat
 
-   "* LP - Invent And Simplify - 10\n"
-   "Give me an example of a complex problem you solved with a simple solution. What made the problem complex? How do you know your solution addressed the problem?\n\n"
-   "or\n"
-   "Tell me about a time when you were able to make something simpler for customers. What drove you to implement this change? What was the impact?\n\n"
-  "** S - What was the problem/issue/request?\n"
-  "** T - What was Challenging about this\n"
-  "** A - What did you do?\n"
-  "** R - What was the result?\n"
-   )
-  )
+     "* LP - Invent And Simplify - 10\n"
+     "Give me an example of a complex problem you solved with a simple solution. What made the problem complex? How do you know your solution addressed the problem?\n\n"
+     "or\n"
+     "Tell me about a time when you were able to make something simpler for customers. What drove you to implement this change? What was the impact?\n\n"
+     "** S - What was the problem/issue/request?\n"
+     "** T - What was Challenging about this\n"
+     "** A - What did you do?\n"
+     "** R - What was the result?\n"
+     )
+    )
+
+  (defun LP-Ownership ()
+    "Just returns standard text for InventAndSimplify LP questions in org bullet format"
+    (concat
+
+     "* LP - Ownership - 10\n"
+     "Give me an example of an initiative you undertook because you saw that it could benefit the whole company or your customers (or team), but wasn’t within any group’s individual responsibility so nothing was being done.\n\n"
+     "or\n"
+     "Describe a time when you didn't think you were going to meet a commitment you promised. How did you identify the risk and communicate it to stakeholders? Is there anything you would do differently?\n\n"
+     "** S - What was the problem/issue/request?\n"
+     "** T - What was Challenging about this\n"
+     "** A - What did you do?\n"
+     "** R - What was the result?\n"
+     )
+    )
+
+  (defun LP-LearnAndBeCurious ()
+    "Just returns standard text for InventAndSimplify LP questions in org bullet format"
+    (concat
+
+     "* LP - Learn And Be Curious - 10\n"
+     "Describe a time when you took on work outside of your comfort area. How did you identify what you needed to learn to be successful? How did you go about building expertise to meet your goal? Did you meet your goal?\n\n"
+     "or\n"
+     "We all have things about ourselves we'd like to improve on at work. Give me an example of something that you've worked on to improve your overall work effectiveness. What resources did you identify to help you develop? What was the impact?\n\n"
+     "** S - What was the problem/issue/request?\n"
+     "** T - What was Challenging about this\n"
+     "** A - What did you do?\n"
+     "** R - What was the result?\n"
+     )
+    )
+
+
+    (defun LP-InventAndSimplify ()
+    "Just returns standard text for InventAndSimplify LP questions in org bullet format"
+    (concat
+
+     "* LP - Invent And Simplify - 10\n"
+     "Give me an example of a complex problem you solved with a simple solution. What made the problem complex? How do you know your solution addressed the problem?\n\n"
+     "or\n"
+     "Tell me about a time when you were able to make something simpler for customers. What drove you to implement this change? What was the impact?\n\n"
+     "** S - What was the problem/issue/request?\n"
+     "** T - What was Challenging about this\n"
+     "** A - What did you do?\n"
+     "** R - What was the result?\n"
+     )
+    )
+
+
+  (defun LP-DisagreeCommit ()
+    "Just returns standard text for DisagreeCommit LP questions in org bullet format"
+    (concat
+
+     "* LP - Have Backbone, Disagree and Commit - 10\n"
+     "Tell me about a time when you strongly disagreed with your manager or peer on something you considered very important to the business. What was it and how did you handle it? Knowing what you know now, would you do anything differently?\n\n"
+     "or\n"
+     "Often, we must make decisions as a group. Give me an example of a time you committed to a group decision even though you disagreed. What factors led you to commit to the decision? Would you make the same decision now?\n\n"
+     "** S - What was the problem/issue/request?\n"
+     "** T - What was Challenging about this\n"
+     "** A - What did you do?\n"
+     "** R - What was the result?\n"
+     )
+    )
+
+  (defun LP-BiasForAction ()
+    "Just returns standard text for Bias for Action  LP questions in org bullet format"
+    (concat
+
+     "* LP - Bias For Action - 10\n"
+     "Give me an example of a calculated risk that you have taken where speed was critical. What was the situation and how did you handle it? What steps did you take to mitigate the risk? What was the outcome? Knowing what you know now, would you have done anything differently?\n\n"
+     "or\n"
+     "Tell me about a time when you worked against tight deadlines and didn't have time to consider all options before making a decision. How much time did you have? What approach did you take? What did you learn from the situation?\n\n"
+     "** S - What was the problem/issue/request?\n"
+     "** T - What was Challenging about this\n"
+     "** A - What did you do?\n"
+     "** R - What was the result?\n"
+     )
+    )
+
 
   (defun Coding-DSAlgo ()
     "Templating for a DSAlgo Question"
@@ -476,6 +571,26 @@ And Cape for some completion backends.
      "#+end_src"
      )
     )
+
+  (defun Coding-LogicalAndMaintainable ()
+    "Templating for a L+M Question"
+    (concat
+     "* Coding - Logical and Maintainable - 35\n"
+     "A CTR is a contact trace record, containing details of a conversation between a customer and agent. Imagine that this is stored as a json file with fields corresponding to different details about the conversation. Some basic details include the start and end timestamps, the contactId (uniq id), the names of the agent and customer, and the transcript of the conversation.\n"
+     "Come up with a re-useable and extensible library for searching through CTR datasets.\n"
+     "A basic library should be able to take start and end dates as a filter input, "
+     "Spending some time talking (7min) before moving on to code\n"
+     "** Communication\n"
+     "** TimeComplexity\n"
+     "** EdgeCases\n"
+     "** Bar\n"
+     "** Code\n"
+     "#+begin_src\n"
+     "code go here\n"
+     "#+end_src"
+     )
+    )
+
 #+end_src
 
 * Magit!
@@ -490,8 +605,29 @@ And Cape for some completion backends.
 #+begin_src emacs-lisp
   (use-package typescript-mode
     :straight t
-    )
+    :config
+    (define-derived-mode typescriptreact-mode typescript-mode
+      "TypeScript TSX")
+
+    ;; use our derived mode for tsx files
+    ;; (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+    ;; by default, typescript-mode is mapped to the treesitter typescript parser
+    ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
+
+
+  (use-package tsi
+    :straight (tsi :type git :host github :repo "orzechowskid/tsi.el")
+
+    :commands (tsi-typescript-mode tsi-json-mode tsi-css-mode)
+    :init
+    (add-hook 'typescript-mode-hook (lambda () (tsi-typescript-mode 1)))
+    (add-hook 'json-mode-hook (lambda () (tsi-json-mode 1)))
+    (add-hook 'css-mode-hook (lambda () (tsi-css-mode 1)))
+    (add-hook 'scss-mode-hook (lambda () (tsi-scss-mode 1))))
+
 #+end_src
+
+
 ** [[https://github.com/joaotavora/eglot][Eglot]]
 #+begin_src emacs-lisp
   (use-package eglot
@@ -509,12 +645,16 @@ And Cape for some completion backends.
     (global-tree-sitter-mode)
     ;; you can easily see the difference tree-sitter-hl-mode makes for python, ts or tsx
     ;; by switching on and off
-    (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+    (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+
+    (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx)))
+
+    )
 
   (use-package tree-sitter-langs
     :straight t
     :after tree-sitter)
-  
+
 #+end_src
 * Amazon
 ** [[https://code.amazon.com/packages/EmacsAmazonLibs/trees/mainline][EmacsAmazonLibs]]
